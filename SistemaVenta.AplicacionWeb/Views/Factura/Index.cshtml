@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura Manual</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .invoice {
+            width: 80%;
+            margin: auto;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background-color: #FFFF;
+        }
+
+            .invoice input, .invoice select {
+                width: 100%;
+                padding: 8px;
+                margin: 5px 0;
+                display: inline-block;
+                border: 1px solid #ccc;
+                box-sizing: border-box;
+            }
+
+            .invoice button {
+                background-color: #75C9C1;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                float: right;
+            }
+
+        .TB {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table, th {
+            border: 1px solid #ccc;
+            color: #000000;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .color{
+            color: #000000;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="invoice">
+        <h2>Factura</h2>
+        <button type="button" onclick="generarFactura()">Generar Factura</button>
+        <button type="button" onclick="limpiardatos()">Limpiar campos</button>
+        <button type="button" onclick="imprimirPDF()">Imprimir PDF</button>
+        <br>
+        <form id="invoiceForm">
+            <label for="cliente">Cliente:</label>
+            <input type="text" id="cliente" placeholder="Nombre del cliente" name="cliente" required>
+
+            <label for="cliente">RFC Cliente:</label>
+            <input type="text" id="rfc" placeholder="RFC del cliente" name="rfc" required>
+
+            <label for="cliente">Direccion:</label>
+            <input type="text" id="direccion" placeholder="Direccion del cliente" name="direccion" required>
+
+            <label for="cliente">Tel. Cliente:</label>
+            <input type="number" id="telefono" placeholder="Tel. del cliente" name="telefono" required>
+
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" required>
+
+            <label for="producto">Descripcion:</label>
+            <input type="text" id="producto" placeholder="Ingresa la descripcion" name="producto" required>
+
+            <label for="cantidad">Cantidad:</label>
+            <input type="number" id="cantidad" placeholder="Ingresa la cantidad" name="cantidad" required>
+
+            <label for="precio">Precio unitario:</label>
+            <input type="number" id="precio" placeholder="Ingresa el precio" name="precio" required>
+
+            <label for="precio">Metodo de pago:</label>
+            <select id="opciones" onchange="guardarSeleccion()">
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+                
+            </select>
+
+
+           
+        </form>
+
+        <div id="facturaGenerada"></div>
+    </div>
+
+    <script>
+        function generarFactura() {
+            alert("Factura generada con exito");
+            var cliente = document.getElementById('cliente').value;
+            var rfc = document.getElementById('rfc').value;
+            var direccion = document.getElementById('direccion').value;
+            var telefono = document.getElementById('telefono').value;
+            var fecha = document.getElementById('fecha').value;
+            var cantidad = document.getElementById('cantidad').value;
+            var producto = document.getElementById('producto').value;
+            var precio = document.getElementById('precio').value;
+            var iva = ((cantidad * precio) * 0.15);
+            var total = (iva + (cantidad * precio));
+            var seleccion = document.getElementById("opciones").value;
+
+            var facturaHTML = `
+                             <hr>
+                               <h3 style="font-family: italic; color: #000000;">Boutique by Alondra</h3>
+                               
+                                       <pre style="font-family: italic;color: #000000;"><B>Direccion:</B> Otomie #213, AV. Felix U. Gomez                                                                 FACTURA</pre>
+                                       <pre style="font-family: italic; color: #000000;"><B>Cd.Postal:</B> 67150                                                                                                              <B>Tipo de comprobante:</B> Ingreso</pre>
+                                               <pre style="font-family: italic; color: #000000;"><B>Tel:</B> 8123455678                                                                                                               <B>Folio:</B> 5566445</pre>
+                               <hr>
+                               <p style="font-family: italic; color: #000000;">Facturacion para:<br>
+                              <B>Nombre:</B> ${cliente}<br>
+                                      <B>RFC:</B> ${rfc}<br>
+                                      <B>Direccion:</B> ${direccion}<br>
+                                      <B>Telefono:</B> ${telefono}<HR>
+                            </p>
+                                            
+                                   
+                                    <table class= "TB">
+                                                <tr style="background-color: #D3DDFF;">
+                                                                <th>Cantidad</th>
+                                                <th>Unidad</th>
+                                                                  <th>Clave Unidad SAT</th>
+                                            
+                                            <th>Descripcion</th>
+                                            <th>Precio Unitario</th>
+                                            <th>Importe</th>
+                                        </tr>
+                                        <tr>
+                                                <td class="color">${cantidad}</td>
+                                            <td class="color">Pieza</td>
+                                            <td class="color">H87</td>
+                                            
+                                                    <td class="color">${producto}</td>
+                                                    <td class="color">${precio}</td>
+                                                    <td class="color">${precio * cantidad}</td>
+                                        </tr>
+                                    </table><HR>
+                                                                    <pre style="font-family: italic;  color: #000000;"><B>Metodo de pago:</B> PUE- Pago en una sola exhibición                                                                                                            Subtotal: $${precio * cantidad}</pre>
+                                                                    <pre style="font-family: italic;  color: #000000;"><B>Forma de pago:</B> ${seleccion}                                                                                                                                                       IVA: 15% $${iva}</pre>
+                                                                    <pre style="font-family: italic;  color: #000000;"><B>Moneda:</B> MXN- Peso Mexicano                                                                                                                                            Total: $${total}</pre>
+                                                                    <Hr>
+                                                                                    <p style="font-family: italic;  color: #000000;"><b>Este documento es una representacion impresa de un CFDI</b></p>
+                                                                                    <p style="font-family: italic;  color: #000000;"><b>Serie del Certificado del Emisor:</b> xxxxxx</p>
+                                                                                    <p style="font-family: italic;  color: #000000;"><b>Folio Fiscal:</b> xxxxxx</p>
+                                                                                    <p style="font-family: italic;  color: #000000;"><b>No. serie del Certificado del SAT:</b> xxxxx</p>
+                                                                                            <p style="font-family: italic;  color: #000000;"><b>Fecha de certificación:</b>${fecha} </p>
+                                                                                 
+                                                                            <table class="TB">
+                                                                                            <tr><td style="text-align:center; background-color: #D3DDFF; "font-family: italic;"><B>Sello digital del CFDI</B></td>
+                                                                            <tr><td style="text-align:center;" >xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td></tr>
+                                                                            </tr>
+                                                                            </table>
+                                                                            
+                                                                            <table class="TB">
+                                                                                            <tr><td style="text-align:center; background-color: #D3DDFF; "font-family: italic;"><B>Sello del SAT</B></td>
+                                                                            <tr><td style="text-align:center;" >xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</td></tr>
+                                                                            </tr>
+                                                                            </table>
+                                                                            
+                                                                                  
+
+                                                                    
+                                                                    
+                                `;
+
+            document.getElementById('facturaGenerada').innerHTML = facturaHTML;
+            @*document.getElementById("opcionSeleccionada").innerText = seleccion;*@
+        }
+
+        function imprimirPDF() {
+            
+            generarFactura();
+            var facturaGenerada = document.getElementById('facturaGenerada');
+            html2pdf(facturaGenerada);
+        }
+
+        function limpiardatos() {
+            // Limpiar los valores de los campos
+            cliente.value = '';
+            direccion.value = '';
+            telefono.value = '';
+            fecha.value = '';
+            cantidad.value = '';
+            producto.value = '';
+            precio.value = '';
+
+        }
+
+        @*function guardarSeleccion() {
+            var seleccion = document.getElementById("opciones").value;
+            document.getElementById("opcionSeleccionada").innerText = seleccion;
+
+            // Aquí puedes realizar acciones adicionales con la opción seleccionada, como enviarla a un servidor o guardarla en localStorage.
+        }*@
+    </script>
+
+</body>
+</html>
