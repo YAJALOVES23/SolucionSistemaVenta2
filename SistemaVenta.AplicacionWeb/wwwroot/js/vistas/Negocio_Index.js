@@ -1,6 +1,8 @@
 ﻿
 $(document).ready(function () {
 
+
+
     $(".card-body").LoadingOverlay("show");
     fetch("/Negocio/Obtener")
         .then(response => {
@@ -20,6 +22,7 @@ $(document).ready(function () {
                 $("#txtDireccion").val(d.direccion)
                 $("#txTelefono").val(d.telefono)
                 $("#txtImpuesto").val(d.porcentajeImpuesto)
+                $("#txtNombreNegocio").val(d.NombreNegocio)
                 $("#txtSimboloMoneda").val(d.simboloMoneda)
                 $("#imgLogo").attr("src", d.urlLogo)
 
@@ -52,6 +55,7 @@ $("#btnGuardarCambios").click(function () {
         direccion: $("#txtDireccion").val(),
         telefono: $("#txTelefono").val(),
         porcentajeImpuesto: $("#txtImpuesto").val(),
+        NombreNegocio: $("#txtNombreNegocio").val(),
         simboloMoneda: $("#txtSimboloMoneda").val()
     }
 
