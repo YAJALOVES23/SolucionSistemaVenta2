@@ -1,8 +1,6 @@
 ﻿
 const VISTA_BUSQUEDA = {
-
     busquedaFecha: () => {
-
         $("#txtFechaInicio").val("")
         $("#txtFechaFin").val("")
         $("#txtNumeroVenta").val("")
@@ -10,7 +8,6 @@ const VISTA_BUSQUEDA = {
         $(".busqueda-fecha").show()
         $(".busqueda-venta").hide()
     }, busquedaVenta: () => {
-
         $("#txtFechaInicio").val("")
         $("#txtFechaFin").val("")
         $("#txtNumeroVenta").val("")
@@ -31,27 +28,23 @@ $(document).ready(function () {
 })
 
 $("#cboBuscarPor").change(function () {
-
     if ($("#cboBuscarPor").val() == "fecha") {
         VISTA_BUSQUEDA["busquedaFecha"]()
     } else {
         VISTA_BUSQUEDA["busquedaVenta"]()
     }
-
 })
 
 $("#btnBuscar").click(function () {
-
     if ($("#cboBuscarPor").val() == "fecha") {
 
         if ($("#txtFechaInicio").val().trim() == "" || $("#txtFechaFin").val().trim() == "") {
-            toastr.warning("", "Debe ingresar fecha inicio y fin")
+            toastr.warning("", "Debre ingresar la fecha de inicio y la fecha de fin.",)
             return;
         }
     } else {
-
         if ($("#txtNumeroVenta").val().trim() == "") {
-            toastr.warning("", "Debe ingresar el numero de venta")
+            toastr.warning("", "Debre ingresar el número de venta.",)
             return;
         }
     }
@@ -60,22 +53,18 @@ $("#btnBuscar").click(function () {
     let fechaInicio = $("#txtFechaInicio").val()
     let fechaFin = $("#txtFechaFin").val()
 
-
     $(".card-body").find("div.row").LoadingOverlay("show");
 
-    fetch(`/Venta/Historial?numeroVenta=${numeroVenta}&fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`)
+    fetch(`/Venta/Historial?numeroVenta=${numeroVenta}&fechaInicio=${fechaInicio}&fechafin=${fechaFin}`)
+
         .then(response => {
             $(".card-body").find("div.row").LoadingOverlay("hide");
             return response.ok ? response.json() : Promise.reject(response);
         })
         .then(responseJson => {
-
             $("#tbventa tbody").html("");
-
             if (responseJson.length > 0) {
-
                 responseJson.forEach((venta) => {
-
                     $("#tbventa tbody").append(
                         $("<tr>").append(
                             $("<td>").text(venta.fechaRegistro),
@@ -91,14 +80,11 @@ $("#btnBuscar").click(function () {
                             )
                         )
                     )
-
                 })
-
             }
-
         })
-
 })
+
 
 $("#tbventa tbody").on("click", ".btn-info", function () {
 
@@ -114,11 +100,9 @@ $("#tbventa tbody").on("click", ".btn-info", function () {
     $("#txtIGV").val(d.impuestoTotal)
     $("#txtTotal").val(d.total)
 
-
     $("#tbProductos tbody").html("");
 
     d.detalleVenta.forEach((item) => {
-
         $("#tbProductos tbody").append(
             $("<tr>").append(
                 $("<td>").text(item.descripcionProducto),
@@ -127,10 +111,9 @@ $("#tbventa tbody").on("click", ".btn-info", function () {
                 $("<td>").text(item.total),
             )
         )
-
     })
 
     $("#linkImprimir").attr("href", `/Venta/MostrarPDFVenta?numeroVenta=${d.numeroVenta}`)
-    $("#modalData").modal("show");
 
+    $("#modalData").modal("show");
 })

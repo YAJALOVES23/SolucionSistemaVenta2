@@ -1,11 +1,12 @@
 ﻿let ValorImpuesto = 0;
-$(document).ready(function () {
 
+$(document).ready(function () {
 
     fetch("/Venta/ListaTipoDocumentoVenta")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         })
+
         .then(responseJson => {
             if (responseJson.length > 0) {
                 responseJson.forEach((item) => {
@@ -16,27 +17,21 @@ $(document).ready(function () {
             }
         })
 
-
-
     fetch("/Negocio/Obtener")
         .then(response => {
             return response.ok ? response.json() : Promise.reject(response);
         })
+
         .then(responseJson => {
-
             if (responseJson.estado) {
-
                 const d = responseJson.objeto;
+                //console.log(d)
 
-                console.log(d)
-
-                //$("#inputGroupSubTotal").text(`Sub total - $`)
-                $("#inputGroupIGV").text(`IGV(${d.porcentajeImpuesto}%) - $`)
-                //$("#inputGroupTotal").text(`Total - $`)
-
+                $("#inputGroupSubTotal").text(`Sub TOTAL - ${d.simboloMoneda}`)
+                $("#inputGroupIGV").text(`IVA(${d.porcentajeImpuesto}%) - ${d.simboloMoneda}`)
+                $("#inputGroupTotal").text(`Total - ${d.simboloMoneda}`)
                 ValorImpuesto = parseFloat(d.porcentajeImpuesto)
             }
-
         })
 
     $("#cboBuscarProducto").select2({
@@ -51,7 +46,6 @@ $(document).ready(function () {
                 };
             },
             processResults: function (data,) {
-
                 return {
                     results: data.map((item) => (
                         {
@@ -73,13 +67,12 @@ $(document).ready(function () {
         templateResult: formatoResultados
     });
 
-
-
 })
+
 
 function formatoResultados(data) {
 
-    //esto es por defecto, ya que muestra el "buscando..."
+    //Esto es por defecto, ya que muestra el Buscar Producto...
     if (data.loading)
         return data.text;
 
@@ -90,13 +83,12 @@ function formatoResultados(data) {
                     <img style="height:60px;width:60px;margin-right:10px" src="${data.urlImagen}"/>
                 </td>
                 <td>
-                    <p style="font-weight: bolder;margin:2px">${data.marca}</p>
+                    <p style="font-weight:bolder;margin:2px">${data.marca}</p>
                     <p style="margin:2px">${data.text}</p>
                 </td>
             </tr>
-         </table>`
+        </table>`
     );
-
     return contenedor;
 }
 
@@ -111,7 +103,7 @@ $("#cboBuscarProducto").on("select2:select", function (e) {
     let producto_encontrado = ProductosParaVenta.filter(p => p.idProducto == data.id)
     if (producto_encontrado.length > 0) {
         $("#cboBuscarProducto").val("").trigger("change")
-        toastr.warning("", "El producto ya fue agregado")
+        toastr.warning("", "El producto ya fué agregado.")
         return false
     }
 
@@ -122,18 +114,18 @@ $("#cboBuscarProducto").on("select2:select", function (e) {
         type: "input",
         showCancelButton: true,
         closeOnConfirm: false,
-        inputPlaceholder: "Ingrese Canitdad"
+        inputPlaceholder: "Ingrese Cantidad."
     },
         function (valor) {
-
             if (valor === false) return false;
 
             if (valor === "") {
-                toastr.warning("", "Necesita ingresar la cantidad")
+                toastr.warning("", "Necesita ingresar la cantidad.")
                 return false;
             }
+
             if (isNaN(parseInt(valor))) {
-                toastr.warning("", "Debe ingresar un valor númerico")
+                toastr.warning("", "Debe ingresar un valor númerico.")
                 return false;
             }
 
@@ -145,20 +137,21 @@ $("#cboBuscarProducto").on("select2:select", function (e) {
                 cantidad: parseInt(valor),
                 precio: data.precio.toString(),
                 total: (parseFloat(valor) * data.precio).toString()
-
             }
 
             ProductosParaVenta.push(producto)
 
-            mostrarProducto_Precios();
+            mostrarProduto_Precios();
+
             $("#cboBuscarProducto").val("").trigger("change")
+
             swal.close()
         }
     )
 
 })
 
-function mostrarProducto_Precios() {
+function mostrarProduto_Precios() {
 
     let total = 0;
     let igv = 0;
@@ -167,10 +160,10 @@ function mostrarProducto_Precios() {
 
     $("#tbProducto tbody").html("")
 
+
+
     ProductosParaVenta.forEach((item) => {
-
         total = total + parseFloat(item.total)
-
         $("#tbProducto tbody").append(
             $("<tr>").append(
                 $("<td>").append(
@@ -193,23 +186,18 @@ function mostrarProducto_Precios() {
     $("#txtIGV").val(igv.toFixed(2))
     $("#txtTotal").val(total.toFixed(2))
 
-
 }
 
 $(document).on("click", "button.btn-eliminar", function () {
-
     const _idproducto = $(this).data("idProducto")
-
     ProductosParaVenta = ProductosParaVenta.filter(p => p.idProducto != _idproducto);
-
-    mostrarProducto_Precios();
+    mostrarProduto_Precios();
 })
 
 
 $("#btnTerminarVenta").click(function () {
-
     if (ProductosParaVenta.length < 1) {
-        toastr.warning("", "Debe ingresar productos")
+        toastr.warning("", "Debe ingresar por lo menos un producto.")
         return;
     }
 
@@ -229,26 +217,27 @@ $("#btnTerminarVenta").click(function () {
 
     fetch("/Venta/RegistrarVenta", {
         method: "POST",
-        headers: { "Content-Type": "application/json; charset=utf-8" },
+        headers: { "Content-Type": "application/json;charset=utf-8" },
         body: JSON.stringify(venta)
     })
+
         .then(response => {
             $("#btnTerminarVenta").LoadingOverlay("hide");
             return response.ok ? response.json() : Promise.reject(response);
         })
-        .then(responseJson => {
 
+        .then(responseJson => {
             if (responseJson.estado) {
                 ProductosParaVenta = [];
-                mostrarProducto_Precios();
+                mostrarProduto_Precios();
 
                 $("#txtDocumentoCliente").val("")
                 $("#txtNombreCliente").val("")
                 $("#cboTipoDocumentoVenta").val($("#cboTipoDocumentoVenta option:first").val())
-
-                swal("Registrado!", `Numero Venta : ${responseJson.objeto.numeroVenta}`, "success")
+                swal("Registrado Exitosamente", `El número de venta es : ${responseJson.objeto.numeroVenta}`, "success")
             } else {
-                swal("Lo sentimos!", "No se pudo registrar la venta", "error")
+                swal("Error, lo sentimos", "No se pudo realizar la venta.", "error")
+                //swal("Error, lo sentimos", responseJson.mensaje, "error")
             }
         })
 

@@ -27,12 +27,20 @@
                         </div>
                         <div class="card-body">
                             <div class="form-row">
+                            <!--<div class="form-group col-sm-6">
+                                    <input type="text" class="form-control form-control-sm" id="txtDocumentoCliente" placeholder="numero de cliente">
+                                </div>-->
                                 <div class="form-group col-sm-6">
-                                    <input type="text" class="form-control form-control-sm" id="txtDocumentoCliente" placeholder="numero documento">
+                                <!--<input type="text" class="form-control form-control-sm" id="txtNombreCliente" placeholder="nombre completo">-->
+                                <select  class="form-control form-control-sm" id="txtNombreCliente">
+                                    <option value="" disabled selected hidden>Nombre del cliente</option>
+                                    <option value="44-Yajaira Azeenth Guajardo Guerra" >44-Yajaira Azeenth Guajardo Guerra</option>
+                                    
+                                </select>
                                 </div>
-                                <div class="form-group col-sm-6">
-                                    <input type="text" class="form-control form-control-sm" id="txtNombreCliente" placeholder="nombre completo">
-                                </div>
+                            <div class="col-sm-3">
+                                <button class="btn btn-success" style="background-color: #75C9C1;" id="btnNuevo"><i class="fas fa-user-plus"></i> Nuevo Cliente</button>
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -86,7 +94,7 @@
                         <div class="card-body">
                             <div class="input-group input-group-sm mb-3">
                                 <div class="input-group-prepend">
-                                    <label class="input-group-text" for="cboTipoDocumentoVenta">Tipo</label>
+                                    <label class="input-group-text" for="cboTipoDocumentoVenta">Método de pago</label>
                                 </div>
                                 <select class="custom-select" id="cboTipoDocumentoVenta">
                                     
@@ -130,6 +138,59 @@
         </div>
     </div>
 
+<!--  Modal-->
+<div class="modal fade" id="modalData" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6>Detalle Cliente</h6>
+                <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" value="0" id="txtId">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtNombreCliente">Nombre</label>
+                                    <input type="text" class="form-control form-control-sm input-validar" id="txtNombre" name="Nombre">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="txtCorreoCliente">Correo</label>
+                                    <input type="email" class="form-control form-control-sm input-validar" id="txtCorreo" name="Correo">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group col-sm-6">
+                                    <label for="txtTelefonoCliente">Telefono</label>
+                                    <input type="text" class="form-control form-control-sm input-validar" id="txtTelefono" name="Telefono">
+                                </div>
+                                <div class="form-group col-sm-6">
+                                    <label for="cboRegimenFiscal">Régimen Fiscal</label>
+                                    <select class="form-control form-control-sm" id="txtRegimenFiscal">
+                                        <option value="444">444</option>
+                                        <option value="333">333</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                
+                                
+
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" type="button" id="btnGuardar">Guardar</button>
+                <button class="btn btn-danger btn-sm" type="button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     @section Scripts{
     <!-- ============================================================
     =SCRIPTS PARA ESTA PAGINA
@@ -138,4 +199,15 @@
     <script src="~/vendor/select2/es.min.js"></script>
 
      <script src="~/js/vistas/Nueva_Venta.js"></script>
+   
+         <script src="~/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.responsive.min.js"></script>
+
+    <script src="~/vendor/datatables/extensiones/js/dataTables.buttons.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/jszip.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.html5.min.js"></script>
+    <script src="~/vendor/datatables/extensiones/js/buttons.print.min.js"></script>
+    <script src="~/js/vistas/Usuario_Index.js"></script>
     }
